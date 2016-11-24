@@ -543,6 +543,7 @@ class ContainerController(wsgi.Application):
         return webob.Response(status_int=200)
 
     def _add_root_mapping(self, volume_id):
+        self.root_dev_path = os.path.realpath(self.root_dev_path)
         self._add_mapping(volume_id, "none", self.root_dev_path)
 
     def _remove_mapping(self, volume_id, ensure=True, static=True):
@@ -550,6 +551,7 @@ class ContainerController(wsgi.Application):
         if os.path.islink(link_file):
             dev_path = os.path.realpath(link_file)
             # ignore the manager root volume
+            self.root_dev_path = os.path.realpath(self.root_dev_path)
             if not dev_path.startswith(self.root_dev_path):
                 LOG.debug(_("Detach volume %s"), volume_id)
                 if ensure:
